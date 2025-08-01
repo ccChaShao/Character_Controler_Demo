@@ -23,6 +23,8 @@ public class InputService : MonoSingleton<InputService>
 
     public bool isShift => inputSystem.Player.Shift.ReadValue<float>() != 0;
 
+    public bool isAttack => inputSystem.Player.Attack.ReadValue<float>() != 0;
+
     public Vector2 scrollVal => inputSystem.Player.Scroll.ReadValue<Vector2>();
 
     public Vector2 moveVal
