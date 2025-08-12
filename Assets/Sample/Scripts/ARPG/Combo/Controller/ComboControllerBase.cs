@@ -11,20 +11,20 @@ using Cysharp.Threading.Tasks;
 public class ComboControllerBase : MonoBehaviour
 {
     [BoxGroup("Combo Box Broup")]
-    [SerializeField] private ComboList m_comboList;
-    [SerializeField, ReadOnly] private int m_currentComboIndex;
-    [SerializeField, ReadOnly] private int m_nextComboIndex;
+    [SerializeField] protected ComboList m_comboList;
+    [SerializeField, ReadOnly] protected int m_currentComboIndex;
+    [SerializeField, ReadOnly] protected int m_nextComboIndex;
     
-    private Animator m_animator;
-    private bool m_canExcuteCombo = true;
-    private CancellationTokenSource m_comboCdDelayCts;
+    protected Animator m_animator;
+    protected bool m_canExcuteCombo = true;
+    protected CancellationTokenSource m_comboCdDelayCts;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         m_animator = GetComponent<Animator>();
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         // 清理异步
         m_comboCdDelayCts?.Cancel();
@@ -32,7 +32,7 @@ public class ComboControllerBase : MonoBehaviour
         m_comboCdDelayCts = null;
     }
 
-    private void ExcuteCombo()
+    protected void ExcuteCombo()
     {
         // 数据更新
         m_currentComboIndex = m_nextComboIndex;
@@ -45,7 +45,6 @@ public class ComboControllerBase : MonoBehaviour
         m_animator.CrossFadeInFixedTime(currentConfig.clipName, 0.155f, 0, 0);
         // index 更新
         UpdateNextComboIndex();
-        m_canExcuteCombo = false;
         // cd 更新
         EnterComboCdDelay(currentConfig.cdDuring);
     }
@@ -57,7 +56,7 @@ public class ComboControllerBase : MonoBehaviour
         m_canExcuteCombo = true;
     }
 
-    private void UpdateNextComboIndex()
+    protected void UpdateNextComboIndex()
     {
         m_nextComboIndex++;
         if (m_nextComboIndex >= m_comboList.GetComboCount())
