@@ -11,4 +11,25 @@ public class ComboList : ScriptableObject
     {
         return comboList.Length;
     }
+
+    public ComboConfig TryGetComboConfig(int index)
+    {
+        if (index >= comboList.Length)
+        {
+            return null;
+        }
+
+        return comboList[index];
+    }
+
+    public string TryGetComboClipName(int index)
+    {
+        var config = TryGetComboConfig(index);
+        if (!config)
+        {
+            return null;
+        }
+
+        return config.clipName;
+    }
 }
