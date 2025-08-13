@@ -2718,6 +2718,7 @@ GameObject:
   - component: {fileID: 232339055947812038}
   - component: {fileID: 8348748660245354580}
   - component: {fileID: 2213404825460528994}
+  - component: {fileID: 1789314678920718468}
   m_Layer: 0
   m_Name: "\u5B89\u6BD4"
   m_TagString: Untagged
@@ -2785,8 +2786,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_comboList: {fileID: 11400000, guid: 0d0bb71f26a28954e8026cfdae09288c, type: 2}
-  m_currentComboIndex: 0
-  m_nextComboIndex: 0
+  m_enablePreInput: 0
+--- !u!114 &1789314678920718468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3690200784509412073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e93b3a01ab8f0274baf660c8005c4e57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soAttribute: {fileID: 11400000, guid: b5e6d83c22d575d4c848dc74eed6efaa, type: 2}
+  soAnimation: {fileID: 11400000, guid: 5db192d09a08ef343a83c8d074d05ac1, type: 2}
 --- !u!1 &3701668446446607413
 GameObject:
   m_ObjectHideFlags: 0

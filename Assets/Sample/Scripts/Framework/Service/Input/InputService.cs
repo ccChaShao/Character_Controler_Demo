@@ -28,6 +28,8 @@ public class InputService : MonoSingleton<InputService>
     public UnityEvent<InputAction.CallbackContext> onShiftPerformed = new ();
     
     public UnityEvent<InputAction.CallbackContext> onScrollPerformed = new ();
+    
+    public UnityEvent<InputAction.CallbackContext> onMovePerformed = new ();
 
 
     public Vector2 scrollVal => inputSystem.Player.Scroll.ReadValue<Vector2>();
@@ -74,12 +76,18 @@ public class InputService : MonoSingleton<InputService>
         onScrollPerformed?.Invoke(context);
     }
 
+    private void OnMovePerformed(InputAction.CallbackContext context)
+    {
+        onMovePerformed?.Invoke(context);
+    }
+
     private void OnEnable()
     {
         inputSystem.Enable();
         inputSystem.Player.Attack.performed += OnAttackPerformed;
         inputSystem.Player.Shift.performed += OnShiftPerformed;
         inputSystem.Player.Scroll.performed += OnScrollPerformed;
+        inputSystem.Player.Move.performed += OnMovePerformed;
     }
 
     private void OnDisable()
@@ -88,5 +96,6 @@ public class InputService : MonoSingleton<InputService>
         inputSystem.Player.Attack.performed -= OnAttackPerformed;
         inputSystem.Player.Shift.performed -= OnShiftPerformed;
         inputSystem.Player.Scroll.performed -= OnScrollPerformed;
+        inputSystem.Player.Move.performed -= OnMovePerformed;
     }
 }
