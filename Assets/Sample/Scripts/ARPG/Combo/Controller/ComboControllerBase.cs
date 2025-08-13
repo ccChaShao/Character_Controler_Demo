@@ -10,14 +10,18 @@ using Cysharp.Threading.Tasks;
 [RequireComponent(typeof(Animator))]
 public class ComboControllerBase : MonoBehaviour
 {
-    [BoxGroup("Combo Box Broup")]
+    [Title("Combo")]
     [SerializeField] protected ComboList m_comboList;
     [SerializeField, ReadOnly] protected int m_currentComboIndex;
     [SerializeField, ReadOnly] protected int m_nextComboIndex;
     
     protected Animator m_animator;
+
+    protected bool m_canEnableCombo = true;
+    private CancellationTokenSource m_comboEnableCdCts;
+    
     protected bool m_canExcuteCombo = true;
-    protected CancellationTokenSource m_comboCdDelayCts;
+    private CancellationTokenSource m_comboExcuteCdCts;
 
     protected virtual void Awake()
     {
@@ -30,42 +34,78 @@ public class ComboControllerBase : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        // 清理异步
-        m_comboCdDelayCts?.Cancel();
-        m_comboCdDelayCts?.Dispose();
-        m_comboCdDelayCts = null;
+        ClearComboEnableCdDelay();
+        ClearComboCdDelay();
     }
 
-    protected void ExcuteCombo()
+    #region 功能函数
+
+    protected void TryExcuteCombo()
     {
+        bool isFirstTime = m_currentComboIndex <= 0;
+        // 招式进入，cd判断
+        if (isFirstTime && !m_canEnableCombo) return;
+        // combo进入，cd判断
+        if (!m_canExcuteCombo) return;
         // 数据更新
         m_currentComboIndex = m_nextComboIndex;
-        var currentConfig = m_comboList.TryGetComboConfig(m_currentComboIndex);
-        if (!currentConfig)
+        var config = m_comboList.TryGetComboConfig(m_currentComboIndex);
+        if (config)
         {
-            return;
+            // 动画播放
+            m_animator.CrossFadeInFixedTime(config.clipName, 0.155f, 0, 0);
+            // combo计时
+            EnterComboCdDelay(config.cdDuring);
         }
-        // 动画播放
-        m_animator.CrossFadeInFixedTime(currentConfig.clipName, 0.155f, 0, 0);
         // index 更新
         UpdateNextComboIndex();
-        // cd 更新
-        EnterComboCdDelay(currentConfig.cdDuring);
-    }
-
-    private async UniTaskVoid EnterComboCdDelay(int msDelay)
-    {
-        m_canExcuteCombo = false;
-        await UniTask.Delay(msDelay);
-        m_canExcuteCombo = true;
+        // 招式cd计时
+        if (isFirstTime) EnterComboEnableCdDelay(m_comboList.cdDuring);   
     }
 
     protected void UpdateNextComboIndex()
     {
         m_nextComboIndex++;
-        if (m_nextComboIndex >= m_comboList.GetComboCount())
+        if (m_nextComboIndex >= m_comboList.comboListCount)
         {
             m_nextComboIndex = 0;
         }
     }
+
+    #endregion
+
+    #region 定时器
+
+    private async UniTask EnterComboEnableCdDelay(int msDelay)
+    {
+        m_canEnableCombo = false;
+        m_comboEnableCdCts = new CancellationTokenSource();
+        await UniTask.Delay(msDelay, cancellationToken: m_comboEnableCdCts.Token);
+        m_canEnableCombo = true;
+    }
+
+    private void ClearComboEnableCdDelay()
+    {
+        m_comboEnableCdCts?.Cancel();
+        m_comboEnableCdCts?.Dispose();
+        m_comboEnableCdCts = null;
+    }
+
+    private async UniTask EnterComboCdDelay(int msDelay)
+    {
+        ClearComboCdDelay();
+        m_canExcuteCombo = false;
+        m_comboExcuteCdCts = new CancellationTokenSource();
+        await UniTask.Delay(msDelay, cancellationToken: m_comboExcuteCdCts.Token);
+        m_canExcuteCombo = true;
+    }
+
+    private void ClearComboCdDelay()
+    {
+        m_comboExcuteCdCts?.Cancel();
+        m_comboExcuteCdCts?.Dispose();
+        m_comboExcuteCdCts = null;
+    }
+
+    #endregion
 }

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc392e1edd3e0a341865e16b1ddbafc9, type: 3}
   m_Name: AnBi_NormalList
   m_EditorClassIdentifier: 
-  comboList:
+  m_cdDuring: 1
+  m_comboList:
   - {fileID: 11400000, guid: 71ab54cecce04a84f96e7c4aa2154ea4, type: 2}
   - {fileID: 11400000, guid: a837ea46c2147c346b451a4257b5b849, type: 2}
   - {fileID: 11400000, guid: c22bfe7afaaa24f4685620855de06451, type: 2}

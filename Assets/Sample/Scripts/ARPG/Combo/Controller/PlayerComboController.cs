@@ -24,20 +24,15 @@ public class PlayerComboController : ComboControllerBase
     protected override void Update()
     {
         base.Update();
-        CheckAttackInput();
+        CheckNormalAttackInput();
     }
 
-    private void CheckAttackInput()
+    private void CheckNormalAttackInput()
     {
-        Debug.Log("charsiew : [CheckInput] : ----------------" + m_isAttackDirty);
         if (m_isAttackDirty)
         {
-            if (m_canExcuteCombo)
-            {
-                ExcuteCombo();          // 内部只关系进入combo，至于combo执行什么，由底层管理
-            }
+            TryExcuteCombo();           // 基类只管尝试进入；
         }
-
         m_isAttackDirty = false;            // 清掉
     }
 

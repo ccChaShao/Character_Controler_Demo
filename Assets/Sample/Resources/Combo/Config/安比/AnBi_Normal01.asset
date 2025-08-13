@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AnBi_Normal01
   m_EditorClassIdentifier: 
   clipName: Avatar_Female_Size02_Anbi_Ani_Attack_Normal_01
-  cdDuring: 0
+  cdDuring: 695
   comboInteractionConfig: []
   attackDetectionConfig: []
   attackFeedbackConfig: []
