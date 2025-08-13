@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3a03283171e6741a7dc1eef35e2d17, type: 3}
   m_Name: AnBi_Normal03
   m_EditorClassIdentifier: 
-  clipName: 
+  clipName: Avatar_Female_Size02_Anbi_Ani_Attack_Normal_03
   cdDuring: 0
   comboInteractionConfig: []
   attackDetectionConfig: []

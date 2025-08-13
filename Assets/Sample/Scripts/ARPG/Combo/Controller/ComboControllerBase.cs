@@ -24,6 +24,10 @@ public class ComboControllerBase : MonoBehaviour
         m_animator = GetComponent<Animator>();
     }
 
+    protected virtual void Update() { }
+
+    protected virtual void OnEnable() {  }
+
     protected virtual void OnDisable()
     {
         // 清理异步
