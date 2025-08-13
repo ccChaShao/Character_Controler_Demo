@@ -11,21 +11,25 @@ using Cysharp.Threading.Tasks;
 public class ComboControllerBase : MonoBehaviour
 {
     [Title("Combo")]
-    [SerializeField] protected ComboList m_comboList;
-    [SerializeField, ReadOnly] protected int m_currentComboIndex;
-    [SerializeField, ReadOnly] protected int m_nextComboIndex;
+    [SerializeField] protected ComboList comboList;
     
-    protected Animator m_animator;
+    protected int curComboIndex;
+    protected Animator animator;
 
-    protected bool m_canEnableCombo = true;
-    private CancellationTokenSource m_comboEnableCdCts;
-    
-    protected bool m_canExcuteCombo = true;
+    // 招式进入
+    protected bool canExcuteCombo = true;
     private CancellationTokenSource m_comboExcuteCdCts;
+    
+    // 招式推进
+    protected bool canMoveNextCombo = true;
+    private CancellationTokenSource m_comboMoveNextCdCts;
+
+    // 招式间隔
+    private CancellationTokenSource m_gapComboCdCts;
 
     protected virtual void Awake()
     {
-        m_animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     protected virtual void Update() { }
@@ -34,77 +38,125 @@ public class ComboControllerBase : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        ClearComboEnableCdDelay();
-        ClearComboCdDelay();
+        ClearComboExcuteDelay();
+        ClearMoveNextComboDelay();
+        ClearComboGapDelay();
     }
 
     #region 功能函数
 
     protected void TryExcuteCombo()
     {
-        bool isFirstTime = m_currentComboIndex <= 0;
+        bool isFirstTime = curComboIndex <= 0;
+        
         // 招式进入，cd判断
-        if (isFirstTime && !m_canEnableCombo) return;
+        if (isFirstTime && !canExcuteCombo)
+        {
+            return;
+        }
         // combo进入，cd判断
-        if (!m_canExcuteCombo) return;
-        // 数据更新
-        m_currentComboIndex = m_nextComboIndex;
-        var config = m_comboList.TryGetComboConfig(m_currentComboIndex);
+        if (!canMoveNextCombo)
+        {
+            return;
+        }
+        int comboIndex = (curComboIndex + 1) >= comboList.comboListCount ? 0 : curComboIndex + 1;
+        var config = comboList.TryGetComboConfig(curComboIndex);
         if (config)
         {
             // 动画播放
-            m_animator.CrossFadeInFixedTime(config.clipName, 0.155f, 0, 0);
+            animator.CrossFadeInFixedTime(config.clipName, 0.155f, 0, 0);
             // combo计时
-            EnterComboCdDelay(config.cdDuring);
+            EnterMoveNextComboDelay(config.cdDuring);
         }
-        // index 更新
-        UpdateNextComboIndex();
+        // 数据更新
+        curComboIndex = comboIndex;
         // 招式cd计时
-        if (isFirstTime) EnterComboEnableCdDelay(m_comboList.cdDuring);   
+        if (isFirstTime) EnterComboExcuteDelay((int)comboList.cdDuring);            // 截断小数点
+        // 招式gap计时
+        EnterComboGapDelay((int)comboList.gapDuring);           // 截断小数点
     }
 
-    protected void UpdateNextComboIndex()
+    protected void ResetComboIndex()
     {
-        m_nextComboIndex++;
-        if (m_nextComboIndex >= m_comboList.comboListCount)
-        {
-            m_nextComboIndex = 0;
-        }
+        curComboIndex = 0;
     }
 
     #endregion
 
     #region 定时器
 
-    private async UniTask EnterComboEnableCdDelay(int msDelay)
+    private async UniTask EnterComboGapDelay(int msDelay)
     {
-        m_canEnableCombo = false;
-        m_comboEnableCdCts = new CancellationTokenSource();
-        await UniTask.Delay(msDelay, cancellationToken: m_comboEnableCdCts.Token);
-        m_canEnableCombo = true;
+        ClearComboGapDelay();
+        m_gapComboCdCts = new();
+        await UniTask.Delay(msDelay, cancellationToken: m_gapComboCdCts.Token);
+        OnComboOverGap_Inside();
     }
 
-    private void ClearComboEnableCdDelay()
+    private void ClearComboGapDelay()
     {
-        m_comboEnableCdCts?.Cancel();
-        m_comboEnableCdCts?.Dispose();
-        m_comboEnableCdCts = null;
+        m_gapComboCdCts?.Cancel();
+        m_gapComboCdCts?.Dispose();
+        m_gapComboCdCts = null;
     }
 
-    private async UniTask EnterComboCdDelay(int msDelay)
+    private async UniTask EnterComboExcuteDelay(int msDelay)
     {
-        ClearComboCdDelay();
-        m_canExcuteCombo = false;
-        m_comboExcuteCdCts = new CancellationTokenSource();
+        ClearComboExcuteDelay();
+        canExcuteCombo = false;
+        m_comboExcuteCdCts = new();
         await UniTask.Delay(msDelay, cancellationToken: m_comboExcuteCdCts.Token);
-        m_canExcuteCombo = true;
+        canExcuteCombo = true;
     }
 
-    private void ClearComboCdDelay()
+    private void ClearComboExcuteDelay()
     {
         m_comboExcuteCdCts?.Cancel();
         m_comboExcuteCdCts?.Dispose();
         m_comboExcuteCdCts = null;
+    }
+
+    private async UniTask EnterMoveNextComboDelay(int msDelay)
+    {
+        ClearMoveNextComboDelay();
+        canMoveNextCombo = false;
+        m_comboMoveNextCdCts = new();
+        await UniTask.Delay(msDelay, cancellationToken: m_comboMoveNextCdCts.Token);
+        canMoveNextCombo = true;
+    }
+
+    private void ClearMoveNextComboDelay()
+    {
+        m_comboMoveNextCdCts?.Cancel();
+        m_comboMoveNextCdCts?.Dispose();
+        m_comboMoveNextCdCts = null;
+    }
+
+    #endregion
+
+    #region Inside Life
+
+    private void OnComboOverGap_Inside()
+    {
+        // 超出间隙 - 招式顺序清空
+        ResetComboIndex();
+        // 传递生命周期
+        OnComboOverGap();
+    }
+
+    #endregion
+
+    #region Outside Life
+
+    public virtual void OnComboOverGap() { }
+
+    #endregion
+
+    #region Anim Event
+
+    public virtual void EnablePreInput()
+    {
+        Debug.Log("charsiew : [EnablePreInput] : -----------------");
     }
 
     #endregion

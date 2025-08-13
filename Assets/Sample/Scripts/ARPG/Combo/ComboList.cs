@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -7,10 +8,18 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "Combo_List", menuName = "Combo/Combo List")]
 public class ComboList : ScriptableObject
 {
-    [SerializeField, LabelText("招式cd"), Tooltip("ms")] private int m_cdDuring;
-    [SerializeField, LabelText("招式列表")] private ComboConfig[] m_comboList;
+    [SerializeField, LabelText("招式冷却")]
+    private int m_cdDuring;
+
+    [SerializeField, LabelText("招式间隙"), PropertyRange(1, 100)]
+    private int m_gapDuring;
+
+    [SerializeField, LabelText("招式列表")] 
+    private ComboConfig[] m_comboList;
     
-    public int cdDuring => m_cdDuring;
+    public int cdDuring => m_cdDuring * 1000;
+    
+    public int gapDuring => m_gapDuring * 1000;
     
     public int comboListCount => m_comboList.Length;
 
