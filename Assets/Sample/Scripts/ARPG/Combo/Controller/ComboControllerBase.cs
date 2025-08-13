@@ -11,10 +11,13 @@ using Cysharp.Threading.Tasks;
 public class ComboControllerBase : MonoBehaviour
 {
     [Title("Combo")]
-    [SerializeField] protected ComboList comboList;
+    [SerializeField, LabelText("招式列表资源")] private ComboList m_comboList;
+
+    [SerializeField, LabelText("预输入开启")] private bool m_enablePreInput;
     
-    protected int curComboIndex;
     protected Animator animator;
+    protected int curComboIndex;
+    protected bool enablePreInput => m_enablePreInput;
 
     // 招式进入
     protected bool canExcuteCombo = true;
@@ -59,8 +62,8 @@ public class ComboControllerBase : MonoBehaviour
         {
             return;
         }
-        int comboIndex = (curComboIndex + 1) >= comboList.comboListCount ? 0 : curComboIndex + 1;
-        var config = comboList.TryGetComboConfig(curComboIndex);
+        int comboIndex = (curComboIndex + 1) >= m_comboList.comboListCount ? 0 : curComboIndex + 1;
+        var config = m_comboList.TryGetComboConfig(curComboIndex);
         if (config)
         {
             // 动画播放
@@ -69,11 +72,12 @@ public class ComboControllerBase : MonoBehaviour
             EnterMoveNextComboDelay(config.cdDuring);
         }
         // 数据更新
-        curComboIndex = comboIndex;
+        curComboIndex = comboIndex;         // 更新下标
+        m_enablePreInput = false;           // 关闭预输入
         // 招式cd计时
-        if (isFirstTime) EnterComboExcuteDelay((int)comboList.cdDuring);            // 截断小数点
+        if (isFirstTime) EnterComboExcuteDelay((int)m_comboList.cdDuring);            // 截断小数点
         // 招式gap计时
-        EnterComboGapDelay((int)comboList.gapDuring);           // 截断小数点
+        EnterComboGapDelay((int)m_comboList.gapDuring);           // 截断小数点
     }
 
     protected void ResetComboIndex()
@@ -156,6 +160,7 @@ public class ComboControllerBase : MonoBehaviour
 
     public virtual void EnablePreInput()
     {
+        m_enablePreInput = true;
         Debug.Log("charsiew : [EnablePreInput] : -----------------");
     }
 
