@@ -2800,7 +2800,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soAttribute: {fileID: 11400000, guid: b5e6d83c22d575d4c848dc74eed6efaa, type: 2}
-  soAnimation: {fileID: 11400000, guid: 5db192d09a08ef343a83c8d074d05ac1, type: 2}
+  soAnim: {fileID: 11400000, guid: 5db192d09a08ef343a83c8d074d05ac1, type: 2}
+  m_isMoving: 0
 --- !u!1 &3701668446446607413
 GameObject:
   m_ObjectHideFlags: 0

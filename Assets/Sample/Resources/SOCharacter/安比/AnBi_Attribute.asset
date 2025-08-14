@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ada275e7ca040446aecb862a3cc3880, type: 3}
   m_Name: AnBi_Attribute
   m_EditorClassIdentifier: 
-  moveSpeed: 0
+  moveSpeed: 10
+  rotateSpeed: 1

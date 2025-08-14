@@ -9,4 +9,6 @@ public class SOAttribute : ScriptableObject
     [Title("基础属性")] 
     
     [LabelText("移动速度")] public float moveSpeed;
+    
+    [LabelText("朝向速度")] public float rotateSpeed;
 }

@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0aa12a99553d024ca5e04486aca4252, type: 3}
   m_Name: AnBi_Animation
   m_EditorClassIdentifier: 
-  movementClip: 
-  jumpClip: 
-  airClip: 
+  idleClip: Avatar_Female_Size02_Anbi_Ani_Idle
+  movementClip: Avatar_Female_Size02_Anbi_Ani_Run

@@ -7,10 +7,7 @@ using UnityEngine;
 public class SOAnimation : ScriptableObject
 {
     [Title("控制动画数据")] 
+    [LabelText("待机")] public string idleClip;
     
     [LabelText("移动")] public string movementClip;
-
-    [LabelText("跳跃")] public string jumpClip;
-
-    [LabelText("空中")] public string airClip;
 }
