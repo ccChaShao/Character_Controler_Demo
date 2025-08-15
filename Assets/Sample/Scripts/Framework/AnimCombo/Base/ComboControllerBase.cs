@@ -125,9 +125,22 @@ public class ComboControllerBase : AnimBehaviourBase
 
     #region Anim Event
 
+    // 预留 - 处理预输入
     public virtual void EnablePreInput()
     {
         m_enablePreInput = true;
+    }
+
+    // 预留 - 处理特效播放
+    public virtual void PlayVFX()
+    {
+        
+    }
+
+    // 预留 - 处理攻击
+    public virtual void ATK()
+    {
+        
     }
 
     #endregion
