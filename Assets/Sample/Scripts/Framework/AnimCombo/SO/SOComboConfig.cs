@@ -10,7 +10,6 @@ public class SOComboConfig : ScriptableObject
 {
     [Title("基础数据")] 
     [LabelText("动画名称")] public string clipName;
-    [LabelText("冷却数据(ms)")] public int cdDuring;
 
     [Title("交互数据")] 
     [LabelText("连招配置")] public ComboInteractionConfig[] comboInteractionConfig;
@@ -58,8 +57,6 @@ public class AttackFeedbackConfig
     public float strength;          // 强度
     public float frequency;         // 频率
     public float duration;          // 持续
-    
-    // [BoxGroup("顿帧")]
 }
 
 /// <summary>

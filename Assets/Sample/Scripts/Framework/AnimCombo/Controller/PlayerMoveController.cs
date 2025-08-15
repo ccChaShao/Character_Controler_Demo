@@ -5,8 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using InputAction = UnityEngine.InputSystem.InputAction;
 
-[RequireComponent(typeof(Animator))]
-public class MoveController : MonoBehaviour
+public class PlayerMoveController : AnimBehaviourBase
 {
     [Title("角色数据")] [LabelText("角色属性数据"), SerializeField]
     private SOAttribute soAttribute;
@@ -77,7 +76,7 @@ public class MoveController : MonoBehaviour
     {
         if (m_EnableMove)
         {
-            m_animator.CrossFadeInFixedTime(soAnim.movementClip, 0.155f, 0, 0);
+            EnterMoveAnim();
         }
         m_isMoveDirty = true;
     }
@@ -86,13 +85,45 @@ public class MoveController : MonoBehaviour
     {
         if (m_EnableMove)
         {
-            m_animator.CrossFadeInFixedTime(soAnim.idleClip, 0.155f, 0, 0);
+            EnterIdleAnim();
         }
         m_isMoveDirty = false;
     }
 
-    public void ClearMovement()
+    private void EnterIdleAnim()
+    {
+        m_animator.CrossFadeInFixedTime(soAnim.idleClip, 0.155f, 0, 0);
+    }
+
+    private void EnterMoveAnim()
+    {
+        m_animator.CrossFadeInFixedTime(soAnim.movementClip, 0.155f, 0, 0);
+    }
+
+    public void ClearMove()
     {
         m_isMoveDirty = false;
+    }
+
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        // 进入战斗 - 暂时中断移动
+        if (stateInfo.IsTag("attack"))
+        {
+            m_EnableMove = false;
+        }
+    }
+
+    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        // 退出战斗 - 尝试恢复移动
+        if (stateInfo.IsTag("attack"))
+        {
+            m_EnableMove = true;
+            if (m_isMoveDirty)
+            {
+                EnterMoveAnim();
+            }
+        }
     }
 }

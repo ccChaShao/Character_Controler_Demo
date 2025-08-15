@@ -39,6 +39,7 @@ public class PlayerComboController : ComboControllerBase
     {
         if (m_isAttackDirty)
         {
+            TrySetPreInput(true);       // 预输入
             TryExcuteCombo();           // 基类只管尝试进入；
         }
         m_isAttackDirty = false;            // 清掉
